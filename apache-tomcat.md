@@ -1,5 +1,5 @@
 # Basic
-* apache vs apache tomcat (= tomcat)
+* apache vs apache tomcat (= tomcat) <br />
 Apache tomcat은 WAS(web server + web container)이므로, Web서버의 기능도 가지고 있다. 그러나, apache (or nginx)와 apache tomcat을 연동하는 이유는 tomcat의 web서버 기능이 
 느리기 때문이다.
 다음은 tomcat과 apache의 비교내용이다. 
