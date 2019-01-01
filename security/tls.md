@@ -20,5 +20,9 @@
       7. 클라이언트 -> 서버 : ClientKeyExchange를 보낸다.
         * ClientKeyExchange : may contain a PreMasterSecret, public key, or nothing. (Again, this depends on the selected cipher.) 
         * PreMasterSecret : is encrypted using the public key of the server certificate.
-      8. 클라이언트 -> 서버 : CertificateVerify를 보낸다.
-        * CertificateVerify : 듣기 클라이언트는 클라이언트의 인증서 개인 키를 사용하여 이전 핸드 셰이크 메시지에 대한 서명 인 CertificateVerify 메시지를 보낸다.
+        
+      8. 서버는 전송받은 정보를 복호화하여 pre-master secret을 알아낸 뒤, 이 정보를 사용해 master secret을 생성한다. 그 뒤 master secret에서 세션 키를 생성해내며, 이 세션 키는 앞으로 서버와 클라이언트 간의 통신을 암호화하는데 사용할 것이다. 물론 클라이언트 역시 자신이 만들어낸 pre-master secret을 알고 있으므로, 같은 과정을 거쳐 세션 키를 스스로 만들 수 있다.
+
+      9. 서버와 클라이언트는 각자 동일한 세션 키를 가지고 있으며, 이를 사용해 대칭 키 암호를 사용하는 통신을 할 수 있다. 따라서 우선 서로에게 ChangeCipherSpec 메시지를 보내 앞으로의 모든 통신 내용은 세션 키를 사용해 암호화해 보낼 것을 알려준 뒤, Finished 메시지를 보내 각자의 핸드셰이킹 과정이 끝났음을 알린다.
+
+      10. 서버와 클라이언트 간에 보안 통신이 구성된다.
