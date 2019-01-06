@@ -112,6 +112,27 @@ tomcat은 Java 프로그램이기 때문에 환경설정만 한다면, command l
 
 
 
-
-
+## web.xml
+* Web application의 deployment descriptor
+* WEB-INF 아래에 위치하고, 모든 Web application들은 하나의 Web.xml을 갖는다.
+  * WEB-INF : This directory contains all things related to the application that aren’t in the document root of the application. 
+  * WEB-INF에 디렉토리에 포함된 파일은 컨테이너에 의해 클라이언트에 직접 제공될 수 없다. 
+  	* Servlet context에서 getResource에 의하여 노출될 수 있음.
+	* 브라우저에서 Context Root 하위의 정보에 대해 접근할 수 있지만 WEB-INF에는 접근할 수 없다는 뜻이기 때문에, url로 Jsp 파일 등에 대한 직접 접근을 제한할 수 있다.
+	* 반대로 브라우저가 참조해야 하는 .js 파일이나 .css 파일 등은 WEB-INF가 아닌 루트 폴더 아래에 static 디렉토리를 만들어서 하위에 넣기도 한다.
+  * WEB-INF/classes : 서블릿을 포함한 자바 클래스 파일들이 위치.
+  * WEB-INF/lib : jar 파일이 여기에 위치. WEB-INF/classes와 동일한 자바 바이트 코드가 존재할 수 있는데, 이런 경우 톰캣 클래스 로더는 
+  WEB-INF/classes를 먼저 찾아 메모리에 로드한다. (WEB-INF/lib에 있는 클래스는 무시됨)
   
+  * 톰캣 클래스 로더 <b>추후에 톰캣 클래스 로더에 관하여 조사해보자 </b>
+  	* 다음과 같은 순서대로 클래스를 찾는다
+  		1. 자바 코어 라이브러리
+		2. 웹 애플리케이션 WEB-INF/classes
+		3. 웹 애플리케이션 WEB-INF/lib
+		4. CATALINA_HOME/lib
+  * META-INF
+  	* 자바 패키징 기술인 jar의 일부
+	* META-INF폴더는 자바에서 설정관련 파일을 저장하는 폴더
+	* jar 파일들을 풀어보면 META-INF 폴더 아래 MANIFEST.MF 라는 파일이 있고 사양서 내용이 있다.
+  	* manifest
+		* The manifest is a special file that can contain information about the files packaged in a JAR file. 	  	 	  * jar file에 대한 스펙이나 사용 메뉴얼을 갖고있다고 생각하면 된다.
