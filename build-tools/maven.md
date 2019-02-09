@@ -36,6 +36,7 @@ maven build tool과 관련된 설정이다.
 		  - 해당 dependency가 포함되는 범위에 대한 타입  
 			  - compile
 				  - 기본 scope
+				  - Compile dependencies are available in all classpaths of a project. Furthermore, those dependencies are propagated to dependent projects
 			  - provided
 				  - 기본 제공되는 API인 경우, provided로 지정 시 마지막 패키징에 포함 되지 않는다. (ex) tomcat에서는 servlet api를 기본으로 제공하기 때문에 패키징시에 제외됨.
 			  - runtime
