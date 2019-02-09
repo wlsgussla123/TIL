@@ -49,3 +49,53 @@ maven build tool과 관련된 설정이다.
 			  - import
 				  - dependencyManagement 섹션에서 pom의 의존 관계에 사용
  
+```xml
+<project>
+    <groupId>com.navercorp.line</groupId>
+    <artifactId>new-project</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+</project>
+```
+* groupId : 프로젝트의 그룹명, 일반적으로 회사 도메인명을 거꾸로 쓴다.
+* artifactId : 프로젝트 이름, groupId에서 유니크 해야한다.
+* modelVersion : maven xml 버전, 4.0을 쓴다
+* version : 해당 artifact의 버전, SNAPSHOT은 개발 중
+* packaging : 어떤 파일 형식으로 패키징 할 것인가를 정의
+
+* 빌드 정보
+	* maven life cycle, 세부적으로 phase 존재
+		* default
+			* compile
+			* test
+			* package
+			* install
+			* deploy
+		* site: 
+			* site
+			* site-deploy
+		* clean
+
+1. mvn process-resources: resources의 실행으로 resources 폴더에 있는 내용을 target/classes로 복사
+2. mvn compile: compile의 실행으로 src/java 밑에 있는 모든 java 파일을 컴파일 하여 target/classes로 복사
+3. mvn process-testResources, mvn test-compile: test/java의 내용을 target/test-classes
+4. mvn test: target/-test-classes에 있는 테스트케이스의 단위 테스트를 진행한다. 결과를 target/surefire-reports에 생성한다.
+5. mvn package : target 디렉토리 하위에 jar, war, ear 등 패키지 파일을 생성
+6. mvn install: 로컬 저장소로 배포
+7. mvn deploy: 원격 저장소로 배포 (회사 repo에 배포, nexus 같은..)
+8. mvn clean: 빌드 과정에서 생성된 target 디렉토리 삭제
+9. mvn site: target/site에 문서 사이트 생성
+10. mvn site-deploy: 문서 사이트를 서버로 배포  
+
+-> maven의 모든 goal은 plugin 기반으로 동작, plugin에서 실행할 수 있는 각각의 작업을 goal이라 하며, 하나의 goal은 하나의 phase와 연결된다. 물론, 하나의 plugin에는 여러 개의 goal이 있을 수 있다.
+
+
+
+
+### 출처
+- https://jeong-pro.tistory.com/168
+- https://goddaehee.tistory.com/48
+- https://en.wikipedia.org/wiki/Apache_Maven#cite_note-maven2repo-3
+- https://maven.apache.org/settings.html
+- https://wikidocs.net/18338
