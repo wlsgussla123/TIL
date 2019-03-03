@@ -51,3 +51,61 @@
 				- servlet context : 모든 servlet이 공용으로 사용할 수 있는  context
 				- Servlet이 종료될 시점에 application context 제거
 			- ContextLoaderListener는 DispatcherServlet 클래스 로드보다 먼저 동작하여, 비지니스 로직층을 정의한 스프링 설정파일을 로드한다.
+
+- 스프링이 제공하는 서블릿 구현체 DispatcherServlet
+	- Front controller pattern
+		- 모든 요청을 컨트롤러 하나가 받아서, 요청을 처리할 핸들러에 전달
+	- Dispatcher Servlet
+		- Front controller 역할
+		- Root WebApplication Context를 상속받는 application context를 하나 더 만든다.
+			- (기존의 Servlet context에 application context가 존재할 경우 상속)
+			- Root WebApplication Context는 서블릿 간 공유 가능
+				- 공통으로 사용할 bean들 등록
+			- Servlet WebApplication Context는 그 Dispatcher servlet scope 안에서만 사용할 수 있다.
+
+	- 스프링 구동 할 때
+		- 서블릿 컨테이너가 먼저 뜨고, 컨테이너 내의 서블릿 애플리케이션에 스프링을 연동 (DispatcherServlet이나 ContextLoaderListener)
+	- 스프링 부트로 구동 할 때
+		- Java application이 먼저 뜨고, 그 안에 embedded tomcat이 내장 서버로 뜬다. embedded tomcat 안에다가 서블릿을 코드로 등록
+
+
+### DispatcherServlet
+1. 요청을 분석한다. (locale, multi-part 등)
+2. 요청을 처리할 핸들러를 찾는다. (핸들러 맵핑에 위임)
+3. 해당 핸들러를 실행할 수 있는 핸들러 어댑터를 찾는다.
+4. 핸들러 어댑터를 사용해서 핸들러의 응답을 처리한다. (reflection 이용)
+5. (부가적으로) 예외가 발생했다면, 예외 처리 핸들러에 요청을 위임
+6. 핸들러의 리턴 값을 보고, 어떻게 처리할지 판단
+	- 뷰 이름에 해당하는 뷰를 찾아서 모델 데이터를 렌더링
+	
+- DispatcherServlet이 사용하는 HandlerMapping, ViewResolver 등은 어디서 오는가?
+	- 필요한 bean을 생성하여 등록해주어야 함.
+	- VewResolver 목록에 매칭되는 bean들을 넣는다.
+		- 없으면, default view resolver (config 파일에 정의 가능)
+		
+- DispatcherServlet은 초기화 되는 과정에서 여러가지 인터페이스들을 초기화 한다.
+	- MultipartResolver, LocaleResolver, ThemeResolver, HandlerMapping 등..
+	- MultipartResolver : 파일 업로드 요청을 처리하는 인터페이스
+		- HTTP header의 Content-Type이 multipart
+		- binary 데이터를 부분 부분 쪼개서 보낸다.
+			- MultipartResolver 구현체에 위임하여 이 데이터를 처리할 수 있도록...
+				- HttpServletRequest를 MultipartHttpServletRequest로 변환해주어 요청이 담고있는 File을 꺼낼 수 있는 API 제공
+	- LocaleResolver : 지역정보 확인에 사용되는 인터페이스
+	- ThemeResolver : 애플리케이션에 설정된 테마를 파악하고 변경할 수 있는 인터페이스
+	- HandlerMapping: 요청을 처리할 핸들러를 찾는 인터페이스
+		- RequestMappingHandlerMapping (annotation 기반)
+		- Url 기반의 HandlerMapping도 존재
+	- HandlerAdapter : HandlerMapping이 찾아낸, 핸들러를 처리하는 인터페이스
+	- HandlerExceptionResolver : @ExceptionHandler로 예외 발생 처리에 활용
+	- RequestToViewNameTranslator : 핸들러에서 뷰 이름을 명시적으로 리턴하지 않을 경우, 요청을 기반으로 view 이름을 판단하는 인터페이스
+	- ViewResolver : view 이름에 해당하는 view를 찾아내는 인터페이스
+		- 기본적으로 InternalViewResolver가 등록
+		- .jsp를 기본적으로 지원
+	- FlashMapManager : redirect 할 때, 요청 매개변수를 사용하지 않고 데이터를 전달하고 정리할 때 사용한다.
+		- ex) Post 요청이 오고, get으로 redirect할 때 요청 파라미터로 데이터를 매번 전송할 필요 없음
+
+
+** web.xml 말고 WebApplicationInitializer에 자바 코드로 서블릿 등록도 가능함.
+** 스프링 부트는 java application을 실행하면, embedded tomcat을 구동. 그리고 tomcat에 DispatcherServlet을 등록해준다.
+	- 스프링 부트 자동 설정이 해줌.
+	- 스프링 부트의 주관에 따라 여러 인터페이스 구현체를 빈으로 등록
